@@ -9,6 +9,8 @@ import fileUpload from 'express-fileupload'
 import cors from 'cors'
 import createHttpError from 'http-errors'
 
+import routes from './routes/index.js'
+
 dotenv.config();
 const app = express()
 
@@ -39,9 +41,7 @@ app.use(fileUpload({
 //cors
 app.use(cors())
 
-app.get('/test', (req, res) => {
-   throw createHttpError.BadRequest('this route has an error.')
-})
+app.use("/api/v1", routes)
 
 app.use(async(req, res, next) =>{
     next(createHttpError.NotFound('This route does not exist.'))
