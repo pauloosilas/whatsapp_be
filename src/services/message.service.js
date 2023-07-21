@@ -5,29 +5,31 @@ export const createMessage = async(data) => {
     let newMessage = await MessageModel.create(data);
     if(!newMessage)
         throw createHttpError.BadRequest("Oops... something went wrong...")
+    
+    return newMessage;
 }
 
 export const populateMessage = async (id) => {
-    let msg = await MessageModel.findById(id).populate({
+    let msg = await MessageModel.findById(id)
+      .populate({
         path: "sender",
         select: "name picture",
         model: "UserModel",
-    })
-        .populate({
-            path: 'conversation',
-            select: 'name isGroup users',
-            model: 'ConversationModel',
-            populate: {
-                path: 'users',
-                select: 'name email picture status',
-                model: "UserModel",
-            }
-        });
-    if(!msg )     
-      throw createHttpError.BadRequest("Oops... something went wrong..."); 
-    
+      })
+      .populate({
+        path: "conversation",
+        select: "name picture isGroup users",
+        model: "ConversationModel",
+        populate: {
+          path: "users",
+          select: "name email picture status",
+          model: "UserModel",
+        },
+      });
+    if (!msg) throw createHttpError.BadRequest("Oops...Something went wrong !");
     return msg;
-}
+  };
+  
 
 export const updateLatestMessage=async(convo_id, msg)=>{
     const updatedConvo = await ConversationModel.findByIdAndUpdate(convo_id, {
@@ -47,6 +49,6 @@ export const getConvoMessages=async(convo_id)=>{
 
     if(!messages)
       throw createHttpError.BadRequest("Oops... something went wrong...");
-    
+   
     return messages;
 }
